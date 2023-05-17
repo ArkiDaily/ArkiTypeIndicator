@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Architect Type Indicator</title>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: "Century Gothic", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .start-button {
+            font-size: 24px;
+            padding: 16px 32px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .question-container {
+            display: none;
+            max-width: 500px;
+            padding: 24px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #questionNumber {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+
+        #questionText {
+            font-size: 20px;
+            margin-bottom: 24px;
+        }
+
+        #choices {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .choice {
+            margin-bottom: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #eee;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .choice:hover {
+            background-color: #ccc;
+        }
+
+        #resultContainer {
+            display: none;
+            max-width: 500px;
+            padding: 24px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #resultText {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 24px;
+        }
+
+        .share-button {
+            font-size: 16px;
+            padding: 12px 24px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .share-button:hover {
+            background-color: #222;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="start-button">Start</button>
+        <div class="question-container">
+            <div id="questionNumber"></div>
+            <div id="questionText"></div>
+            <div id="choices"></div>
+        </div>
+        <div id="resultContainer">
+            <div id="resultText"></div>
+            <button class="share-button">Share on Facebook</button>
+        </div>
+    </div>
+
+   <script>
+        var currentQuestion = 0;
+        var totalQuestions = 20;
+        var answers = [];
+
+        var questions = [
+            // Question 1
+            {
+                question: "How do you approach the design process?",
+                choices: [
+                    { text: "Take a systematic and methodical approach", type: "Analytical Architect" },
+                    { text: "Emphasize creativity and intuitive thinking", type: "Intuitive Architect" },
+                    { text: "Balance analytical thinking with creative exploration", type: "Balanced Architect" },
+                    { text: "Adapt your design process based on each project's unique requirements", type: "Adaptive Architect" }
+                ]
+            },
+            // Question 2
+            {
+                question: "What is your preferred architectural style?",
+                choices: [
+                    { text: "Modern and minimalist", type: "Modernist Architect" },
+                    { text: "Historical and classical", type: "Traditionalist Architect" },
+                    { text: "Eclectic and diverse", type: "Eclectic Architect" },
+                    { text: "Adaptable and flexible", type: "Adaptive Architect" }
+                ]
+            },
+            // Question 3
+            {
+                question: "How do you approach site analysis in architectural projects?",
+                choices: [
+                    { text: "Thoroughly analyze site conditions and constraints", type: "Analytical Architect" },
+                    { text: "Seek inspiration from the site and context", type: "Contextual Architect" },
+                    { text: "Adapt the design to harmonize with the site", type: "Harmonious Architect" },
+                    { text: "Blend the design with the natural environment", type: "Naturalistic Architect" }
+                ]
+            },
+            // Question 4
+            {
+                question: "What is your approach to architectural innovation?",
+                choices: [
+                    { text: "Constantly seek out new ideas and push the boundaries", type: "Innovative Architect" },
+                    { text: "Balance innovation with practicality and functionality", type: "Pragmatic Architect" },
+                    { text: "Draw inspiration from past innovations and reinterpret them", type: "Reinterpretive Architect" },
+                    { text: "Explore innovative solutions within the constraints of each project", type: "Adaptive Architect" }
+                ]
+            },
+            // Question 5
+            {
+                question: "How do you approach client relationships in architectural projects?",
+                choices: [
+                    { text: "Collaborate closely with clients throughout the design process", type: "Collaborative Architect" },
+                    { text: "Take a client-centered approach, prioritizing their vision and needs", type: "Client-Centric Architect" },
+                    { text: "Educate and guide clients to make informed design decisions", type: "Guiding Architect" },
+                    { text: "Adapt your approach based on each client's communication style", type: "Adaptive Architect" }
+                ]
+            },
+            // Question 6
+            {
+                question: "How do you approach sustainable design in architectural projects?",
+                choices: [
+                    { text: "Integrate sustainable features and strategies from the start", type: "Sustainable Architect" },
+                    { text: "Seek to minimize the environmental impact of the design", type: "Environmental Architect" },
+                    { text: "Balance sustainability with other design considerations", type: "Balanced Architect" },
+                    { text: "Adapt sustainable strategies to each project's unique context", type: "Adaptive Architect" }
+                ]
+            },
+            // Question 7
+            {
+                question: "What is your approach to teamwork in architectural projects?",
+                choices: [
+                    { text: "Value collaboration and actively seek input from team members", type: "Collaborative Architect" },
+                    { text: "Take a leadership role and guide the team's creative direction", type: "Visionary Architect" },
+                    { text: "Balance individual contributions with the overall project vision", type: "Balanced Architect" },
+                    { text: "Adapt your teamwork style based on each team's dynamics", type: "Adaptive Architect" }
+                ]
+            },
+            // Question 8
+            {
+                question: "How do you approach architectural criticism and feedback?",
+                choices: [
+                    { text: "Welcome constructive criticism and use it to improve your design", type: "Growth-Oriented Architect" },
+                    { text: "Defend your design choices and remain confident in your vision", type: "Confident Architect" },
+                    { text: "Consider feedback and adapt the design when necessary", type: "Adaptive Architect" },
+                    { text: "Balance criticism with your own design judgment", type: "Balanced Architect" }
+                ]
+            },
+            // Question 9
+            {
+                question: "What is your attitude towards architectural history and theory?",
+                choices: [
+                    { text: "Deeply value and draw inspiration from architectural history", type: "Historical Architect" },
+                    { text: "Approach theory as a guiding framework for your design", type: "Theoretical Architect" },
+                    { text: "Consider history and theory as valuable references, but not binding", type: "Balanced Architect" },
+                    { text: "Adapt historical and theoretical concepts to contemporary contexts", type: "Adaptive Architect" }
+                ]
+            },
+            // Question 10
+            {
+                question: "What is your preferred approach to project management in architectural projects?",
+                choices: [
+                    { text: "Follow a structured project management methodology", type: "Structured Architect" },
+                    { text: "Take a flexible and adaptable approach based on project requirements", type: "Adaptive Architect" },
+                    { text: "Delegate tasks and responsibilities to team members", type: "Delegating Architect" },
+                    { text: "Balance project management with design exploration", type: "Balanced Architect" }
+                ]
+            },
+            // Question 11
+            {
+                question: "How do you approach the use of technology in architectural design?",
+                choices: [
+                    { text: "Embrace the latest technological advancements in design and visualization", type: "Technologically Driven Architect" },
+                    { text: "Balance technology with traditional design methods", type: "Balanced Architect" },
+                    { text: "Adapt your use of technology based on each project's requirements", type: "Adaptive Architect" },
+                    { text: "Prefer traditional design methods over extensive technology usage", type: "Traditionalist Architect" }
+                ]
+            },
+            // Question 12
+            {
+                question: "What is your approach to architectural presentation and communication?",
+                choices: [
+                    { text: "Invest time and effort in creating visually compelling presentations", type: "Visual Architect" },
+                    { text: "Focus on clear and concise communication of design concepts", type: "Communicative Architect" },
+                    { text: "Adapt your presentation style to effectively communicate with different audiences", type: "Adaptive Architect" },
+                    { text: "Use a combination of visual and verbal communication approaches", type: "Balanced Architect" }
+                ]
+            },
+            // Question 13
+            {
+                question: "How do you approach budget and cost considerations in architectural projects?",
+                choices: [
+                    { text: "Strive to deliver designs within the allocated budget", type: "Cost-Conscious Architect" },
+                    { text: "Balance cost considerations with design quality and functionality", type: "Balanced Architect" },
+                    { text: "Find innovative solutions to reduce project costs without compromising design", type: "Innovative Architect" },
+                    { text: "Adapt the design to align with the available budget", type: "Adaptive Architect" }
+                ]
+            },
+            // Question 14
+            {
+                question: "What is your attitude towards architectural regulations and codes?",
+                choices: [
+                    { text: "Adhere strictly to regulations and codes", type: "Compliant Architect" },
+                    { text: "Consider regulations and codes as guidelines to be creatively interpreted", type: "Creative Architect" },
+                    { text: "Balance compliance with regulations and codes with design innovation", type: "Balanced Architect" },
+                    { text: "Adapt the design to meet both regulatory requirements and design goals", type: "Adaptive Architect" }
+                ]
+            },
+            // Question 15
+            {
+                question: "How do you approach architectural competitions and awards?",
+                choices: [
+                    { text: "Participate actively in competitions and strive for recognition", type: "Ambitious Architect" },
+                    { text: "Value competitions as opportunities for growth and learning", type: "Growth-Oriented Architect" },
+                    { text: "Balance competition involvement with other design pursuits", type: "Balanced Architect" },
+                    { text: "Adapt your participation based on the alignment with your design philosophy", type: "Adaptive Architect" }
+                ]
+            },
+            // Question 16
+            {
+                question: "What is your approach to architectural research and exploration?",
+                choices: [
+                    { text: "Investigate and explore diverse architectural concepts and theories", type: "Exploratory Architect" },
+                    { text: "Focus on researching specific areas of interest within architecture", type: "Focused Architect" },
+                    { text: "Balance research with practical design application", type: "Balanced Architect" },
+                    { text: "Adapt your research focus based on project requirements", type: "Adaptive Architect" }
+                ]
+            },
+            // Question 17
+            {
+                question: "How do you approach the use of color in architectural design?",
+                choices: [
+                    { text: "Use color strategically to evoke specific emotions and enhance spatial experiences", type: "Color-Sensitive Architect" },
+                    { text: "Prefer a restrained color palette to create a sense of harmony", type: "Minimalist Architect" },
+                    { text: "Adapt the use of color to align with each project's context and requirements", type: "Adaptive Architect" },
+                    { text: "Value vibrant and bold color choices to create visual impact", type: "Expressive Architect" }
+                ]
+            },
+            // Question 18
+            {
+                question: "What is your approach to architectural detailing and craftsmanship?",
+                choices: [
+                    { text: "Pay meticulous attention to architectural details and strive for craftsmanship", type: "Craftsman Architect" },
+                    { text: "Value simplicity and minimalism in architectural detailing", type: "Minimalist Architect" },
+                    { text: "Adapt architectural detailing to align with the overall design concept", type: "Adaptive Architect" },
+                    { text: "Balance architectural detailing with functionality and practicality", type: "Balanced Architect" }
+                ]
+            },
+            // Question 19
+            {
+                question: "How do you approach architectural education and continuous learning?",
+                choices: [
+                    { text: "Continuously seek opportunities for professional development and learning", type: "Lifelong Learner Architect" },
+                    { text: "Value formal architectural education as the foundation of your knowledge", type: "Academic Architect" },
+                    { text: "Balance formal education with self-directed learning and practical experience", type: "Balanced Architect" },
+                    { text: "Adapt your learning approach based on the specific skills and knowledge you need", type: "Adaptive Architect" }
+                ]
+            },
+            // Question 20
+            {
+                question: "What is your approach to architectural ethics and social responsibility?",
+                choices: [
+                    { text: "Consider ethical and social implications throughout the design process", type: "Ethical Architect" },
+                    { text: "Value social impact and community engagement in architectural projects", type: "Community-Oriented Architect" },
+                    { text: "Balance ethical considerations with other design priorities", type: "Balanced Architect" },
+                    { text: "Adapt your approach to align with the specific social context of each project", type: "Adaptive Architect" }
+                ]
+            }
+        ]
+
+         var startButton = document.querySelector(".start-button");
+        var questionContainer = document.querySelector(".question-container");
+        var questionNumber = document.querySelector("#questionNumber");
+        var questionText = document.querySelector("#questionText");
+        var choicesContainer = document.querySelector("#choices");
+        var resultContainer = document.querySelector("#resultContainer");
+        var resultText = document.querySelector("#resultText");
+
+        startButton.addEventListener("click", startQuiz);
+
+        function startQuiz() {
+            startButton.style.display = "none";
+            questionContainer.style.display = "block";
+            showQuestion();
+        }
+
+        function showQuestion() {
+            var question = questions[currentQuestion];
+            questionNumber.textContent = "Question " + (currentQuestion + 1) + " of " + totalQuestions;
+            questionText.textContent = question.question;
+            choicesContainer.innerHTML = "";
+
+            for (var i = 0; i < question.choices.length; i++) {
+                var choice = document.createElement("button");
+                choice.textContent = question.choices[i].text;
+                choice.setAttribute("class", "choice");
+                choice.addEventListener("click", selectAnswer);
+                choicesContainer.appendChild(choice);
+            }
+        }
+
+        function selectAnswer(e) {
+            var selectedChoice = e.target;
+            var selectedAnswer = questions[currentQuestion].choices.find(choice => choice.text === selectedChoice.textContent);
+            answers.push(selectedAnswer.type);
+            currentQuestion++;
+
+            if (currentQuestion === totalQuestions) {
+                showResult();
+            } else {
+                showQuestion();
+            }
+        }
+
+        function showResult() {
+            questionContainer.style.display = "none";
+            resultContainer.style.display = "block";
+
+            var result = getMostFrequentAnswer();
+            resultText.textContent = "Your architectural type is: " + result;
+
+            shareOnFacebook();
+        }
+
+        function getMostFrequentAnswer() {
+            var counts = {};
+            var maxCount = 0;
+            var mostFrequentAnswer = "";
+
+            for (var i = 0; i < answers.length; i++) {
+                var answer = answers[i];
+                counts[answer] = (counts[answer] || 0) + 1;
+
+                if (counts[answer] > maxCount) {
+                    maxCount = counts[answer];
+                    mostFrequentAnswer = answer;
+                }
+            }
+
+            return mostFrequentAnswer;
+        }
+
+        function shareOnFacebook() {
+            var url = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href);
+            
+        }
+    </script>
+</body>
+</html>
